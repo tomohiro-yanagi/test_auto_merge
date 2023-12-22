@@ -15,11 +15,11 @@ permissions:
 jobs:
   approve-and-merge-by-dependabot:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.1.1
+        uses: dependabot/fetch-metadata@v1
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Approve a PR if not already approved
@@ -38,7 +38,6 @@ jobs:
           !contains(steps.dependabot-metadata.outputs.dependency-names, 'antd') && 
           !contains(steps.dependabot-metadata.outputs.dependency-names, 'prettier')
         run: gh pr merge --auto --squash "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          GH_TOKEN: ${{ github.token }}
+    env:
+      PR_URL: ${{github.event.pull_request.html_url}}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
